@@ -5,17 +5,18 @@ const config = useRuntimeConfig();
 const localePath = useLocalePath();
 const switchLocalePath = useSwitchLocalePath();
 const search = ref("");
-const activeLocale = locale.value;
 
 const { data: articles } = await useAsyncData(
-  `articles:${activeLocale}`,
-  () =>
-    queryCollection("articles")
-      .where("locale", "=", activeLocale)
+  () => `articles:${locale.value}`,
+  () => {
+    console.log(locale.value);
+    return queryCollection("articles")
+      .where("locale", "=", locale.value)
       .order("date", "DESC")
-      .all(),
+      .all();
+  },
   {
-    default: () => [],
+    watch: [locale],
   },
 );
 
