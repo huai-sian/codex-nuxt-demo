@@ -6,16 +6,18 @@ const localePath = useLocalePath()
 const switchLocalePath = useSwitchLocalePath()
 
 const slug = computed(() => String(route.params.slug))
+const activeLocale = locale.value
+const activeSlug = slug.value
 
 const { data: article } = await useAsyncData(
-  () => `article:${locale.value}:${slug.value}`,
+  `article:${activeLocale}:${activeSlug}`,
   () =>
     queryCollection('articles')
-      .where('locale', '=', locale.value)
-      .where('slug', '=', slug.value)
+      .where('locale', '=', activeLocale)
+      .where('slug', '=', activeSlug)
       .first(),
   {
-    watch: [locale, slug]
+    default: () => null
   }
 )
 

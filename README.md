@@ -22,3 +22,18 @@ npm run generate
 ```
 
 Markdown articles live in `content/articles/{locale}/`. Each article needs `title`, `description`, `date`, `image`, `slug`, `locale`, and `tags` frontmatter.
+
+## Vercel
+
+This project deploys as a generated static site on Vercel.
+
+`vercel.json` sets:
+
+```json
+{
+  "buildCommand": "npm run generate",
+  "outputDirectory": ".output/public"
+}
+```
+
+Set `NUXT_PUBLIC_SITE_URL` in Vercel project environment variables to the production domain.
