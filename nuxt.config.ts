@@ -28,7 +28,7 @@ export default defineNuxtConfig({
     },
   },
   i18n: {
-    strategy: "prefix_except_default",
+    strategy: "prefix",
     defaultLocale: "zh",
     langDir: "locales",
     detectBrowserLanguage: {
