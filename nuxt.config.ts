@@ -10,7 +10,6 @@ export default defineNuxtConfig({
         { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "theme-color", content: "#ffffff" },
       ],
-      link: [{ rel: "icon", href: "/favicon.ico" }],
     },
   },
   runtimeConfig: {
@@ -36,7 +35,9 @@ export default defineNuxtConfig({
       useCookie: true,
       cookieKey: "site_locale",
       redirectOn: "root",
+      alwaysRedirect: true,
     },
+    skipSettingLocaleOnNavigate: false,
     locales: [
       {
         code: "zh",

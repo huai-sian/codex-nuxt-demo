@@ -16,6 +16,7 @@ const { data: articles } = await useAsyncData(
       .all(),
   {
     default: () => [],
+    immediate: true,
   },
 );
 
