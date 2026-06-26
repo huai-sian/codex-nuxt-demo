@@ -1,51 +1,70 @@
 <script setup lang="ts">
-const { locale, t } = useI18n()
-const route = useRoute()
-const config = useRuntimeConfig()
-const localePath = useLocalePath()
-const switchLocalePath = useSwitchLocalePath()
+const { locale, t } = useI18n();
+const route = useRoute();
+const config = useRuntimeConfig();
+const localePath = useLocalePath();
+const switchLocalePath = useSwitchLocalePath();
 
-const slug = computed(() => String(route.params.slug))
+const slug = computed(() => String(route.params.slug));
+const activeLocale = locale.value;
+const activeSlug = slug.value;
 
 const { data: article } = await useAsyncData(
-  () => `article:${locale.value}:${slug.value}`,
+  `article:${activeLocale}:${activeSlug}`,
   () =>
-    queryCollection('articles')
-      .where('locale', '=', locale.value)
-      .where('slug', '=', slug.value)
+    queryCollection("articles")
+      .where("locale", "=", activeLocale)
+      .where("slug", "=", activeSlug)
       .first(),
   {
-    watch: [locale, slug]
-  }
-)
+    default: () => null,
+  },
+);
 
 if (!article.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Article not found' })
+  throw createError({ statusCode: 404, statusMessage: "Article not found" });
 }
 
-const canonicalPath = localePath(route.path)
+const canonicalPath = localePath(route.path);
 
 useSeoMeta({
-  title: () => article.value?.title ?? t('siteName'),
-  ogTitle: () => article.value?.title ?? t('siteName'),
+  title: () => article.value?.title ?? t("siteName"),
+  ogTitle: () => article.value?.title ?? t("siteName"),
   description: () => article.value?.description,
   ogDescription: () => article.value?.description,
   ogImage: () => article.value?.image,
-  ogType: 'article',
-  twitterCard: 'summary_large_image'
-})
+  ogType: "article",
+  twitterCard: "summary_large_image",
+});
 
 useHead(() => ({
   htmlAttrs: {
-    lang: locale.value === 'zh' ? 'zh-Hant' : locale.value === 'ko' ? 'ko-KR' : 'en-US'
+    lang:
+      locale.value === "zh"
+        ? "zh-Hant"
+        : locale.value === "ko"
+        ? "ko-KR"
+        : "en-US",
   },
   link: [
-    { rel: 'canonical', href: `${config.public.siteUrl}${canonicalPath}` },
-    { rel: 'alternate', hreflang: 'zh-Hant', href: `${config.public.siteUrl}${switchLocalePath('zh')}` },
-    { rel: 'alternate', hreflang: 'en-US', href: `${config.public.siteUrl}${switchLocalePath('en')}` },
-    { rel: 'alternate', hreflang: 'ko-KR', href: `${config.public.siteUrl}${switchLocalePath('ko')}` }
-  ]
-}))
+    { rel: "canonical", href: `${config.public.siteUrl}${canonicalPath}` },
+    {
+      rel: "alternate",
+      hreflang: "zh-Hant",
+      href: `${config.public.siteUrl}${switchLocalePath("zh")}`,
+    },
+    {
+      rel: "alternate",
+      hreflang: "en-US",
+      href: `${config.public.siteUrl}${switchLocalePath("en")}`,
+    },
+    {
+      rel: "alternate",
+      hreflang: "ko-KR",
+      href: `${config.public.siteUrl}${switchLocalePath("ko")}`,
+    },
+  ],
+}));
 
 /* 瀏覽器顯示圖片大致經過：
 
@@ -68,14 +87,21 @@ decoding="async" 可以提升頁面流暢度，不阻塞主執行緒
 
 <template>
   <article v-if="article" class="article-page">
-    <NuxtLinkLocale to="/" class="back-link">{{ t('backToHome') }}</NuxtLinkLocale>
+    <NuxtLinkLocale to="/" class="back-link">{{
+      t("backToHome")
+    }}</NuxtLinkLocale>
     <header class="article-hero">
       <div>
         <time :datetime="article.date">{{ article.date }}</time>
         <h1>{{ article.title }}</h1>
         <p>{{ article.description }}</p>
       </div>
-      <img :src="article.image" :alt="article.title" loading="eager" decoding="async" />
+      <img
+        :src="article.image"
+        :alt="article.title"
+        loading="eager"
+        decoding="async"
+      />
     </header>
 
     <ContentRenderer class="prose" :value="article" />
